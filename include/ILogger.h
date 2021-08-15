@@ -1,6 +1,5 @@
 #pragma once
 #include "RC.h"
-#include "Interfacedllexport.h"
 
 /*
 * Defines for comfortable logging with information about caller
@@ -13,7 +12,7 @@
 #define SendInfo(Logger, Code) Logger->info((Code), __FILE__, __func__, __LINE__)
 */
 
-class LIB_EXPORT ILogger {
+class  ILogger {
 public:
     enum class Level {
         SEVERE,   // Critical error that prevents application from running further

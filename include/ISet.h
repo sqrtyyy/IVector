@@ -2,9 +2,8 @@
 #include <cstddef>
 #include "IVector.h"
 #include "RC.h"
-#include "Interfacedllexport.h"
 
-class LIB_EXPORT ISet {
+class  ISet {
 public:
     static RC setLogger(ILogger* const logger);
     static ILogger* getLogger();
@@ -47,7 +46,7 @@ public:
     class IIterator {
     public:
         /*
-        * Create iterator associated with next/previous position
+        * Create iterator associated with nextVec/previous position
         *
         * @param [in] indexInc Quantity of steps forward
         */
