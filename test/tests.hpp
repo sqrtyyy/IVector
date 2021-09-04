@@ -3,6 +3,7 @@
 #include "IVector.h"
 #include "ILogger.h"
 #include "ISet.h"
+#include "ICompact.h"
 #include <cassert>
 
 #define TOLERANCE 1e-6
@@ -35,63 +36,76 @@
                                      printf("\n");
 #define TEST_RESULT(result)  if (!(result)){PRINT_TEST_RESULT(false); assert(false);}
 namespace VecTest {
-    void testCreate();
+  void testCreate();
 
-    void testCopy();
-    void testMove();
+  void testCopy();
+  void testMove();
 
-    void testClone();
-    void testGetData();
-    void testSetData();
+  void testClone();
+  void testGetData();
+  void testSetData();
 
-    void testGetCord();
-    void testSetCord();
-    void testScale();
-    void testGetDim();
+  void testGetCord();
+  void testSetCord();
+  void testScale();
+  void testGetDim();
 
-    void testInc();
-    void testDec();
+  void testInc();
+  void testDec();
 
-    void testAdd();
-    void testSub();
+  void testAdd();
+  void testSub();
 
-    void testDot();
-    void testEquals();
+  void testDot();
+  void testEquals();
 
-    void testFirstNorm();
-    void testSecondNorm();
-    void testChebyshevNorm();
+  void testFirstNorm();
+  void testSecondNorm();
+  void testChebyshevNorm();
 
-    void testApplyFunc();
-    void testForeach();
+  void testApplyFunc();
+  void testForeach();
     
-    void testAll();
-};
+  void testAll();
+}
 
 namespace SetTest {
-    void testCreate();
+  void testCreate();
 
-    void testGetDim();
-    void testGetSize();
-    void testGetCopy();
-    void testGetCoords();
+  void testGetDim();
+  void testGetSize();
+  void testGetCopy();
+  void testGetCoords();
 
-    void testInsert();
-    void testRemoveByIndex();
-    void testRemoveByPattern();
+  void testInsert();
+  void testRemoveByIndex();
+  void testRemoveByPattern();
 
-    void testClone();
+  void testClone();
 
-    void testFindFirst();
-    void testFindFirstAndCopy();
-    void testFindFirstAndCopyCoords();
+  void testFindFirst();
+  void testFindFirstAndCopy();
+  void testFindFirstAndCopyCoords();
 
-    void testMakeIntersection();
-    void testMakeUnion();
-    void testSub();
-    void testSymSub();
-    void testEquals();
-    void testSubSet();
+  void testMakeIntersection();
+  void testMakeUnion();
+  void testSub();
+  void testSymSub();
+  void testEquals();
+  void testSubSet();
 
-    void testAll();
+  void testAll();
 };
+
+namespace MultiIndexTest {
+  void testCreate();
+
+  void testGetDim();
+  void testGetSize();
+  void testGetAxisIndex();
+  void testGetData();
+  void testIncAxisIndex();
+  void testSetAxisIndex();
+  void testSetData();
+
+}

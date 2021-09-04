@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include "ILogger.h"
 
-class LIB_EXPORT IMultiIndex {
+class IMultiIndex {
 public:
     static IMultiIndex * createMultiIndex(size_t dim, const size_t* indices);
     virtual IMultiIndex * clone() const = 0;

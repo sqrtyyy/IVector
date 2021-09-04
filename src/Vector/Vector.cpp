@@ -30,12 +30,13 @@ Vector* Vector::createVector(size_t dim, const double * const & ptr_data) {
   }
   size_t size = sizeof(Vector) + dim * sizeof(double);
   char* mem = static_cast<char*>(malloc(size));
-  if(mem == nullptr) return nullptr;
+  if(mem == nullptr) {
+    LogError(m_pLogger, RC::ALLOCATION_ERROR);
+    return nullptr;
+  }
   auto* vec = new(mem) Vector(dim);
   auto data = (double *)(mem + sizeof(Vector));
-  for (int i = 0; i < vec->m_dim; ++i) {
-    data[i] = ptr_data[i];
-  }
+  memcpy(data, ptr_data, dim * sizeof(double));
   return vec;
 }
 
