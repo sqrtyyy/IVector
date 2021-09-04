@@ -14,6 +14,7 @@ namespace {
   class Compact : public ICompact {
   private:
     unsigned m_dim;
+  public:
     static ILogger* m_pLogger;
   private:
     explicit Compact(unsigned dim);

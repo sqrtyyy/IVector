@@ -4,6 +4,8 @@
 
 #include <cstring>
 #include <utility>
+#include <ICompact.h>
+
 #include "Compact.h"
 #include "../Helpers/Helpers.h"
 
@@ -324,6 +326,25 @@ ICompact *ICompact::createCompact(const IVector *vec1, const IVector *vec2, cons
   return Compact::createCompact(vec1, vec2, nodeQuantities);
 }
 
+ICompact *ICompact::createIntersection(const ICompact *op1, const ICompact *op2, const IMultiIndex *const grid, double tol)
+{
+  return Compact::createIntersection(op1, op2, grid, tol);
+}
+
+ICompact *ICompact::createCompactSpan(const ICompact *op1, const ICompact *op2, const IMultiIndex *const grid)
+{
+  return Compact::createCompactSpan(op1, op2, grid);
+}
+
+RC ICompact::setLogger(ILogger *const logger)
+{
+  Compact::m_pLogger = logger;
+  return RC::SUCCESS;
+}
+ILogger* ICompact::getLogger()
+{
+  return Compact::m_pLogger;
+}
 Compact::~Compact() = default;
 
 ICompact::~ICompact() = default;
@@ -480,13 +501,13 @@ Compact::Iterator::~Iterator()
 
 ICompact::IIterator::~IIterator() = default;
 
-RC Compact::IIterator::setLogger(ILogger *const pLogger)
+RC ICompact::IIterator::setLogger(ILogger *const pLogger)
 {
   Compact::Iterator::m_pIteratorLogger = pLogger;
   return RC::SUCCESS;
 }
 
-ILogger *Compact::IIterator::getLogger()
+ILogger *ICompact::IIterator::getLogger()
 {
   return Compact::Iterator::m_pIteratorLogger;
 }
