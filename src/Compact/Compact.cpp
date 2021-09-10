@@ -306,15 +306,6 @@ ICompact::IIterator *Compact::getIterator(const IMultiIndex *const &index, const
 }
 
 
-
-
-
-
-
-
-
-
-
 //ICompact
 
 ICompact *ICompact::createCompact(const IVector *vec1, const IVector *vec2, const IMultiIndex *nodeQuantities)
