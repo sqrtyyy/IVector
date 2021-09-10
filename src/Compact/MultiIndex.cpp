@@ -35,13 +35,13 @@ IMultiIndex *MultiIndex::createMultiIndex(size_t dim, const size_t *indices)
     return nullptr;
   }
   auto * multiIndex = new(memory) MultiIndex(dim);
-  memcpy(multiIndex->getIndices(), indices, dim);
+  memcpy(multiIndex->getIndices(), indices, dim * sizeof(size_t));
   return multiIndex;
 }
 
 bool MultiIndex::isValidIndex(size_t idx, bool isLog) const
 {
-  if (idx > m_dim) {
+  if (idx >= m_dim) {
     if (isLog) LogError(m_pLogger, RC::INDEX_OUT_OF_BOUND);
     return false;
   }
@@ -63,7 +63,7 @@ const size_t *MultiIndex::getData() const
 
 IMultiIndex *MultiIndex::clone() const
 {
-  return nullptr;
+  return IMultiIndex::createMultiIndex(m_dim, getData());
 }
 
 RC MultiIndex::getAxisIndex(size_t axisIndex, size_t &val) const
@@ -103,7 +103,7 @@ RC MultiIndex::setAxisIndex(size_t axisIndex, size_t val)
 
 RC MultiIndex::setLogger(ILogger *const pLogger)
 {
-  if(checkPointer(pLogger, m_pLogger, true)){
+  if(checkPointer(m_pLogger, pLogger, true)){
     m_pLogger = pLogger;
     return RC::SUCCESS;
   }

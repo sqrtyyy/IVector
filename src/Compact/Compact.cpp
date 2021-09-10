@@ -59,18 +59,14 @@ const size_t *Compact::getGridData() const
 
 RC Compact::getLeftBoundary(IVector *&vec) const
 {
-  if (!checkPointer(m_pLogger, vec)){
-    return RC::NULLPTR_ERROR;
-  }
-  return vec->setData(getDim(), getLeftData());
+  vec = IVector::createVector(m_dim, getLeftData());
+  return vec != nullptr ? RC::SUCCESS : RC::ALLOCATION_ERROR;
 }
 
 RC Compact::getRightBoundary(IVector *&vec) const
 {
-  if (!checkPointer(m_pLogger, vec)){
-    return RC::NULLPTR_ERROR;
-  }
-  return vec->setData(getDim(), getRightData());
+  vec = IVector::createVector(m_dim, getRightData());
+  return vec != nullptr ? RC::SUCCESS : RC::ALLOCATION_ERROR;
 }
 
 bool Compact::isInside(const IVector *const &vec) const
@@ -274,7 +270,7 @@ ICompact *Compact::createCompact(const IVector *vec1, const IVector *vec2, const
   || !checkPointer(m_pLogger, (void *) nodeQuantities)){
     return nullptr;
   }
-  if (vec1->getDim() != vec2->getDim()) {
+  if (vec1->getDim() != vec2->getDim() || vec1->getDim() != nodeQuantities->getDim()) {
     LogError(m_pLogger, RC::MISMATCHING_DIMENSIONS);
     return nullptr;
   }
