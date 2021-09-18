@@ -147,8 +147,8 @@ ICompact * Compact::createIntersection(const ICompact *op1, const ICompact *op2,
 
   if ( op1->getLeftBoundary(leftOp1Vec) != RC::SUCCESS ||
        op1->getRightBoundary(rightOp1Vec) != RC::SUCCESS ||
-       op1->getLeftBoundary(leftOp2Vec) != RC::SUCCESS ||
-       op1->getRightBoundary(rightOp2Vec) != RC::SUCCESS) {
+       op2->getLeftBoundary(leftOp2Vec) != RC::SUCCESS ||
+       op2->getRightBoundary(rightOp2Vec) != RC::SUCCESS) {
     delete leftOp1Vec;
     delete rightOp1Vec;
     delete leftOp2Vec;
@@ -224,9 +224,9 @@ ICompact *Compact::createCompactSpan(const ICompact *op1, const ICompact *op2, c
   IVector* rightOp2Vec = nullptr;
 
   if ( op1->getLeftBoundary(leftOp1Vec) != RC::SUCCESS ||
-  op1->getRightBoundary(rightOp1Vec) != RC::SUCCESS ||
-  op1->getLeftBoundary(leftOp2Vec) != RC::SUCCESS ||
-  op1->getRightBoundary(rightOp2Vec) != RC::SUCCESS) {
+       op1->getRightBoundary(rightOp1Vec) != RC::SUCCESS ||
+       op2->getLeftBoundary(leftOp2Vec) != RC::SUCCESS ||
+       op2->getRightBoundary(rightOp2Vec) != RC::SUCCESS) {
     delete leftOp1Vec;
     delete rightOp1Vec;
     delete leftOp2Vec;
@@ -247,7 +247,7 @@ ICompact *Compact::createCompactSpan(const ICompact *op1, const ICompact *op2, c
 
   for (unsigned i = 0; i < op1->getDim(); ++i) {
     spanLeft->setCord(i, std::min(leftOp1Vec->getData()[i], leftOp2Vec->getData()[i]));
-    spanRight->setCord(i, std::min(rightOp1Vec->getData()[i], rightOp2Vec->getData()[i]));
+    spanRight->setCord(i, std::max(rightOp1Vec->getData()[i], rightOp2Vec->getData()[i]));
   }
 
   ICompact* span = ICompact::createCompact(spanLeft, spanRight, grid);

@@ -25,7 +25,7 @@ namespace {
     static double evaluateDerivative(const size_t* degrees, const double *params, const double *args) ;
     static void evalGradient(IVector *const &val, const double *params, const double *args);
   public:
-    Problem(ICompact *params, ICompact *args);
+    Problem();
     RC setParams(const IVector *const &params) override;
     RC setArgs(const IVector *const &args) override;
     bool isValidParams(const IVector *const &params) const override;
@@ -37,6 +37,8 @@ namespace {
     double evalDerivativeByParams(const IVector *const &params, const IMultiIndex *const &index) const override;
     RC evalGradientByArgs(const IVector *const &args, IVector *const &val) const override;
     RC evalGradientByParams(const IVector *const &params, IVector *const &val) const override;
+    RC setParamsDomain(const ICompact *const &params) override;
+    RC setArgsDomain(const ICompact *const &args, ILogger *logger) override;
     ~Problem() override;
   };
 }

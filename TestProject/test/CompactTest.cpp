@@ -1,8 +1,6 @@
-//
-// Created by aleksei on 04.09.2021.
-//
 #include <iostream>
 #include <cstring>
+#include <memory>
 #include "tests.hpp"
 
 
@@ -21,7 +19,7 @@ void MultiIndexTest::testCreate()
 
   TEST_RESULT(multiIndex == nullptr);
 
-  ClEAR_MULTIDX_ONE
+  CLEAR_MULTIDX_ONE
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
 }
@@ -38,9 +36,9 @@ void MultiIndexTest::testGetDim()
   TEST_RESULT(multIdx1->getDim() != multIdxOtherDim->getDim());
 
 
-  ClEAR_MULTIDX_ONE
-  ClEAR_MULTIDX_TWO
-  ClEAR_MULTIDX_OTHER_DIM
+  CLEAR_MULTIDX_ONE
+  CLEAR_MULTIDX_TWO
+  CLEAR_MULTIDX_OTHER_DIM
 
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
@@ -56,7 +54,7 @@ void MultiIndexTest::testGetData()
   TEST_RESULT(multIdx1Data != nullptr);
   TEST_RESULT(!std::memcmp(multIdx1Data, data1_mlt.data(), data1_mlt.size() * sizeof(size_t)))
 
-  ClEAR_MULTIDX_ONE
+  CLEAR_MULTIDX_ONE
 
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
@@ -73,7 +71,7 @@ void MultiIndexTest::testGetAxisIndex()
 
   TEST_RESULT(multIdx1->getAxisIndex(multIdx1->getDim(), val) == RC::INDEX_OUT_OF_BOUND);
 
-  ClEAR_MULTIDX_ONE
+  CLEAR_MULTIDX_ONE
 
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
@@ -93,7 +91,7 @@ void MultiIndexTest::testIncAxisIndex()
   TEST_RESULT(multIdx1->incAxisIndex(5, 1) == RC::INDEX_OUT_OF_BOUND)
 
 
-  ClEAR_MULTIDX_ONE
+  CLEAR_MULTIDX_ONE
 
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
@@ -112,7 +110,7 @@ void MultiIndexTest::testSetAxisIndex()
   TEST_RESULT(multIdx1->setAxisIndex(5, 1) == RC::INDEX_OUT_OF_BOUND)
 
 
-  ClEAR_MULTIDX_ONE
+  CLEAR_MULTIDX_ONE
 
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
@@ -130,7 +128,7 @@ void MultiIndexTest::testSetData()
   TEST_RESULT(multIdx1->setData(sizeof(indices) / sizeof(size_t), nullptr) == RC::NULLPTR_ERROR);
   TEST_RESULT(multIdx1->setData(0, indices) == RC::MISMATCHING_DIMENSIONS);
 
-  ClEAR_MULTIDX_ONE
+  CLEAR_MULTIDX_ONE
 
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
@@ -144,12 +142,12 @@ void MultiIndexTest::testClone()
   IMultiIndex* multiIndex = multIdx1->clone();
 
   TEST_RESULT(multiIndex != nullptr);
-  TEST_RESULT(!std::memcmp(multIdx1->getData(), multiIndex->getData(), multiIndex->getDim() * sizeof(size_t)))
+  TEST_RESULT(!std::memcmp(multIdx1->getData(),  multiIndex->getData(), multiIndex->getDim() * sizeof(size_t)))
   size_t indices[] = {2, 3, 4, 6, 8};
   multIdx1->setData(sizeof(indices) / sizeof(size_t), indices);
   TEST_RESULT(!std::memcmp(multIdx1->getData(), multIdx1->getData(), sizeof(indices)))
 
-  ClEAR_MULTIDX_ONE
+  CLEAR_MULTIDX_ONE
 
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
@@ -208,8 +206,8 @@ void CompactTest::testCreate()
   CLEAR_VEC_ONE
   CLEAR_VEC_TWO
   CLEAR_VEC_THREE
-  ClEAR_MULTIDX_OTHER_DIM
-  ClEAR_MULTIDX_ONE
+  CLEAR_MULTIDX_OTHER_DIM
+  CLEAR_MULTIDX_ONE
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
 }
@@ -227,7 +225,7 @@ void CompactTest::testGetDim()
 
   CLEAR_VEC_ONE
   CLEAR_VEC_TWO
-  ClEAR_MULTIDX_OTHER_DIM
+  CLEAR_MULTIDX_OTHER_DIM
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
 }
@@ -250,7 +248,7 @@ void CompactTest::testGetGrid()
 
   CLEAR_VEC_ONE
   CLEAR_VEC_TWO
-  ClEAR_MULTIDX_OTHER_DIM
+  CLEAR_MULTIDX_OTHER_DIM
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
 }
@@ -281,7 +279,7 @@ void CompactTest::testGetLeftBoundary()
 
   CLEAR_VEC_ONE
   CLEAR_VEC_TWO
-  ClEAR_MULTIDX_OTHER_DIM
+  CLEAR_MULTIDX_OTHER_DIM
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
 }
@@ -312,11 +310,200 @@ void CompactTest::testGetRightBoundary()
 
   CLEAR_VEC_ONE
   CLEAR_VEC_TWO
-  ClEAR_MULTIDX_OTHER_DIM
+  CLEAR_MULTIDX_OTHER_DIM
   CLEAR_LOGGER
   PRINT_TEST_RESULT(true)
 }
 
+void CompactTest::testGetVectorCoords() {
+  CREATE_LOGGER
+  CREATE_VEC_ONE
+  CREATE_VEC_TWO
+  CREATE_MULTIDX_OTHER_DIM
+  CREATE_MULTIDX_DIM4_TWO
+  CREATE_MULTIDX_DIM4_THREE
+
+  auto compact = ICompact::createCompact(vec1, vec2, multIdxOtherDim);
+  IVector* vec = nullptr;
+  TEST_RESULT(compact->getVectorCoords(multIdxDim4two,vec) == RC::NULLPTR_ERROR)
+  TEST_RESULT(compact->getVectorCoords(multIdxDim4two, vec1) == RC::SUCCESS)
+  std::array<double, 4> answer({3, 3.3125, 6, 7.75});
+  double const* result = vec1->getData();
+
+  for (size_t i = 0; i < data1.size(); ++i) {
+    TEST_RESULT(result[i] == answer[i])
+  }
+
+  TEST_RESULT(compact->getVectorCoords(multIdxDim4three, vec1) == RC::INDEX_OUT_OF_BOUND)
+  delete compact;
+  delete vec;
+
+  CLEAR_VEC_ONE
+  CLEAR_VEC_TWO
+  CLEAR_MULTIDX_OTHER_DIM
+  CLEAR_MULTIDX_DIM4_TWO
+  CLEAR_MULTIDX_DIM4_THREE
+  CLEAR_LOGGER
+  PRINT_TEST_RESULT(true)
+}
+
+void CompactTest::testGetVectorCopy() {
+  CREATE_LOGGER
+  CREATE_VEC_ONE
+  CREATE_VEC_TWO
+  CREATE_MULTIDX_OTHER_DIM
+  CREATE_MULTIDX_DIM4_TWO
+  auto compact = ICompact::createCompact(vec1, vec2, multIdxOtherDim);
+  IVector* vec = nullptr;
+  TEST_RESULT(compact->getVectorCopy(multIdxDim4two,vec) == RC::SUCCESS)
+  std::array<double, 4> answer({3, 3.3125, 6, 7.75});
+  double const* result = vec->getData();
+
+  for (size_t i = 0; i < data1.size(); ++i) {
+    TEST_RESULT(result[i] == answer[i])
+  }
+  delete compact;
+  delete vec;
+
+  CLEAR_VEC_ONE
+  CLEAR_VEC_TWO
+  CLEAR_MULTIDX_OTHER_DIM
+  CLEAR_MULTIDX_DIM4_TWO
+  CLEAR_LOGGER
+  PRINT_TEST_RESULT(true)
+}
+
+void CompactTest::testIsInside() {
+  CREATE_LOGGER
+  CREATE_VEC_ONE
+  CREATE_VEC_TWO
+  CREATE_VEC_FIVE
+  CREATE_VEC_FOUR
+  CREATE_MULTIDX_OTHER_DIM
+
+  auto compact = ICompact::createCompact(vec1, vec4, multIdxOtherDim);
+  TEST_RESULT(compact->isInside(vec2) == false)
+  TEST_RESULT(compact->isInside(vec5) == true)
+  delete compact;
+
+  CLEAR_VEC_ONE
+  CLEAR_VEC_TWO
+  CLEAR_VEC_FIVE
+  CLEAR_VEC_FOUR
+  CLEAR_MULTIDX_OTHER_DIM
+  CLEAR_LOGGER
+}
+
+void CompactTest::testClone() {
+  CREATE_LOGGER
+  CREATE_VEC_ONE
+  CREATE_VEC_TWO
+  CREATE_MULTIDX_OTHER_DIM
+  CREATE_MULTIDX_DIM4_TWO
+
+  auto compact = ICompact::createCompact(vec1, vec2, multIdxOtherDim);
+  std::unique_ptr<ICompact> pCompart = std::unique_ptr<ICompact>(compact->clone());
+  IVector* vec3 = nullptr;
+  IVector* vec4 = nullptr;
+  compact->getVectorCopy(multIdxDim4two ,vec3);
+  pCompart->getVectorCopy(multIdxDim4two ,vec4);
+
+  for (size_t idx = 0; idx < data1.size(); ++idx)
+    TEST_RESULT(vec3->getData()[idx] == vec4->getData()[idx])
+
+  delete compact;
+  delete vec3;
+  delete vec4;
+  CLEAR_LOGGER
+  CLEAR_VEC_ONE
+  CLEAR_VEC_TWO
+  CLEAR_MULTIDX_OTHER_DIM
+  CLEAR_MULTIDX_DIM4_TWO
+  PRINT_TEST_RESULT(true)
+}
+
+void CompactTest::testIntersection() {
+  CREATE_LOGGER
+  CREATE_VEC_ONE
+  CREATE_VEC_TWO
+  CREATE_VEC_FIVE
+  CREATE_VEC_FOUR
+  CREATE_MULTIDX_OTHER_DIM
+
+  auto compact1 = ICompact::createCompact(vec5, vec2, multIdxOtherDim);
+  auto compact2 = ICompact::createCompact(vec1, vec4, multIdxOtherDim);
+  auto intersection = ICompact::createIntersection(compact1, compact2, multIdxOtherDim, TOLERANCE);
+
+  TEST_RESULT(intersection)
+  IVector *left = nullptr, *right = nullptr;
+  intersection->getLeftBoundary(left);
+  intersection->getRightBoundary(right);
+  TEST_RESULT(left && right)
+  double const* responseLeft = left->getData();
+  double const* responseRight = right->getData();
+  double answerLeft[4] = {5, 5.5, 3, 7};
+  double answerRight[4] = {15, 6, 6, 8.5};
+  for (size_t i = 0; i < 4; ++i) {
+    TEST_RESULT(responseLeft[i] == answerLeft[i])
+    TEST_RESULT(responseRight[i] == answerRight[i])
+  }
+
+  delete(compact1);
+  delete(compact2);
+  delete(intersection);
+  delete(left);
+  delete(right);
+
+  CLEAR_VEC_ONE
+  CLEAR_VEC_TWO
+  CLEAR_VEC_FIVE
+  CLEAR_VEC_FOUR
+  CLEAR_MULTIDX_OTHER_DIM
+  CLEAR_LOGGER
+  PRINT_TEST_RESULT(true)
+}
+
+void CompactTest::testSpan() {
+  CREATE_LOGGER
+  CREATE_VEC_ONE
+  CREATE_VEC_TWO
+  CREATE_VEC_FIVE
+  CREATE_VEC_FOUR
+  CREATE_MULTIDX_OTHER_DIM
+
+  auto compact1 = ICompact::createCompact(vec5, vec2, multIdxOtherDim);
+  auto compact2 = ICompact::createCompact(vec1, vec4, multIdxOtherDim);
+  auto span = ICompact::createCompactSpan(compact1, compact2, multIdxOtherDim);
+
+  TEST_RESULT(span)
+  IVector *left = nullptr, *right = nullptr;
+  span->getLeftBoundary(left);
+  span->getRightBoundary(right);
+  TEST_RESULT(left && right)
+  double const* responseLeft = left->getData();
+  double const* responseRight = right->getData();
+  double answerLeft[4] = {1, 3, 3, 6};
+  double answerRight[4] = {36, 8, 9, 8.5};
+  for (size_t i = 0; i < 4; ++i) {
+    double a = responseLeft[i], b = responseRight[i];
+    TEST_RESULT(responseLeft[i] == answerLeft[i])
+    TEST_RESULT(responseRight[i] == answerRight[i])
+  }
+
+  delete(compact1);
+  delete(compact2);
+  delete(span);
+  delete(left);
+  delete(right);
+
+  CLEAR_VEC_ONE
+  CLEAR_VEC_TWO
+  CLEAR_VEC_FIVE
+  CLEAR_VEC_FOUR
+  CLEAR_MULTIDX_OTHER_DIM
+  CLEAR_LOGGER
+  PRINT_TEST_RESULT(true)
+}
 
 void CompactTest::testAll()
 {
@@ -328,10 +515,12 @@ void CompactTest::testAll()
   testGetGrid();
   testGetLeftBoundary();
   testGetRightBoundary();
-//  testGetVectorCoords();
-//  testGetVectorCopy();
-//  testIsInside();
-//  testClone();
+  testGetVectorCoords();
+  testGetVectorCopy();
+  testIsInside();
+  testClone();
+  testIntersection();
+  testSpan();
 
   std::cout << "Successfully ran all Compact tests" << std::endl;
 }

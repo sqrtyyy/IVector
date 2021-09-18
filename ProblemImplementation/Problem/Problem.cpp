@@ -10,11 +10,11 @@ ILogger*     Problem::m_pLogger = nullptr;
 const size_t Problem::m_argsNum = 2;
 const size_t Problem::m_paramsNum = 4;
 
-Problem::Problem(ICompact *params, ICompact *args)
+Problem::Problem()
 : m_args(nullptr)
-, m_argsCompact(args)
+, m_argsCompact(nullptr)
 , m_params(nullptr)
-, m_paramsCompact(params)
+, m_paramsCompact(nullptr)
 {}
 
 double Problem::evaluate(const double *params, const double *args)
@@ -143,7 +143,7 @@ double Problem::evalByArgs(const IVector *const &args) const
 
 IDiffProblem *Problem::clone() const
 {
-  IDiffProblem* newProblem = IDiffProblem::createDiffProblem(m_paramsCompact, m_argsCompact);
+  IDiffProblem* newProblem = IDiffProblem::createDiffProblem();
   if (newProblem == nullptr) {
     LogError(getLogger(), RC::ALLOCATION_ERROR);
     return nullptr;
@@ -252,37 +252,54 @@ RC Problem::evalGradientByParams(const IVector *const &params, IVector *const &v
   return RC::SUCCESS;
 }
 
-IDiffProblem *IDiffProblem::createDiffProblem(const ICompact *const &params, const ICompact *const &args)
+RC Problem::setParamsDomain(const ICompact *const &params)
 {
-  if (!checkPointer(getLogger(), (void *) params)
-  || !checkPointer(getLogger(), (void *) args)){
-    return nullptr;
+  if (!checkPointer(IDiffProblem::getLogger(), (void *) params)) {
+    return RC::NULLPTR_ERROR;
   }
 
-  if (params->getDim() != Problem::m_paramsNum || args->getDim() != Problem::m_argsNum) {
-    LogError(getLogger(), RC::MISMATCHING_DIMENSIONS);
-    return nullptr;
+  ICompact *copy = params->clone();
+  if(copy == nullptr) {
+    LogError(IDiffProblem::getLogger(), RC::ALLOCATION_ERROR);
+    return RC::ALLOCATION_ERROR;
   }
-  ICompact* paramsCopy = params->clone();
-  ICompact* argsCopy = args->clone();
-  if(paramsCopy == nullptr || argsCopy == nullptr) {
-    delete paramsCopy;
-    delete argsCopy;
-    LogError(getLogger(), RC::ALLOCATION_ERROR);
-    return nullptr;
+  delete m_paramsCompact;
+  m_paramsCompact = copy;
+  if (m_params != nullptr && !m_paramsCompact->isInside(m_params)) {
+    delete m_params;
+    m_params = nullptr;
   }
-
-  auto* problem = new(std::nothrow) Problem(paramsCopy, argsCopy);
-
-  if(problem == nullptr) {
-    LogError(getLogger(), RC::ALLOCATION_ERROR);
-  }
-  return problem;
+  return RC::SUCCESS;
 }
 
-IProblem* IProblem::createProblem(const ICompact *const &params, const ICompact *const &args)
+RC Problem::setArgsDomain(const ICompact *const &args, ILogger *logger)
 {
-  return IDiffProblem::createDiffProblem(params, args);
+  if (!checkPointer(IDiffProblem::getLogger(), (void *) args)) {
+    return RC::NULLPTR_ERROR;
+  }
+
+  ICompact *copy = args->clone();
+  if(copy == nullptr) {
+    LogError(IDiffProblem::getLogger(), RC::ALLOCATION_ERROR);
+    return RC::ALLOCATION_ERROR;
+  }
+  delete m_argsCompact;
+  m_argsCompact = copy;
+  if (m_args != nullptr && !m_argsCompact->isInside(m_args)) {
+    delete m_args;
+    m_args = nullptr;
+  }
+  return RC::SUCCESS;
+}
+
+IDiffProblem *IDiffProblem::createDiffProblem()
+{
+  return new(std::nothrow) Problem();
+}
+
+IProblem* IProblem::createProblem()
+{
+  return IDiffProblem::createDiffProblem();
 }
 
 RC IProblem::setLogger(ILogger *const logger)

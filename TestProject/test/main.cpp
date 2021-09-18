@@ -2,13 +2,16 @@
 
 #include <iostream>
 
-int main() {
-    VecTest::testAll();
-    std::cout << std::endl;
-    SetTest::testAll();
-    std::cout << std::endl;
-    MultiIndexTest::testAll();
-    std::cout << std::endl;
-    CompactTest::testAll();
-    return 0;
+int main()
+{
+  VecTest::testAll();
+  std::cout << std::endl;
+  SetTest::testAll();
+  std::cout << std::endl;
+  MultiIndexTest::testAll();
+  std::cout << std::endl;
+  CompactTest::testAll();
+  std::cout << std::endl;
+  ProblemTest::testAll();
+  return 0;
 }
