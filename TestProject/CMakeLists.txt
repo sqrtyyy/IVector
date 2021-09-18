@@ -10,5 +10,5 @@ file(GLOB HFILES include/*.h)
 
 add_executable(${PROJECT_NAME} ${TESTS} ${HFILES} )
 
-target_link_directories(${PROJECT_NAME} PUBLIC libs)
-target_link_libraries(${PROJECT_NAME} AntonovCompact AntonovLogger AntonovProblem AntonovSet AntonovVector)
+target_link_directories(${PROJECT_NAME} PUBLIC ../libs)
+target_link_libraries(${PROJECT_NAME}  ${CMAKE_DL_LIBS} AntonovCompact AntonovLogger AntonovProblem AntonovSet AntonovVector)
